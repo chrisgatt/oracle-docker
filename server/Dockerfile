@@ -43,9 +43,10 @@ RUN rm /tmp/instSwOnly.rsp && \
     $ORACLE_BASE/oraInventory/orainstRoot.sh && \
     $ORACLE_HOME/root.sh && \
     sed -i -e "s|###ORACLE_BASE###|$ORACLE_BASE|g" /etc/profile.d/oracle.sh && \
-    sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g" /etc/profile.d/oracle.sh &&\
+    sed -i -e "s|###ORACLE_HOME###|$ORACLE_HOME|g" /etc/profile.d/oracle.sh && \
     yum -y install epel-release && \
     yum -y install python34 python34-devel && \
+    yum -y install jq && \
     yum clean all && \
     curl https://bootstrap.pypa.io/get-pip.py | python3.4 && \
     pip3 install chaperone
@@ -54,7 +55,14 @@ RUN rm /tmp/instSwOnly.rsp && \
 COPY chaperone.d/*.conf /etc/chaperone.d/
 COPY sbin/* /opt/tools/sbin/
 COPY bin/* /opt/tools/bin/
+COPY etc/orclopts.json /opt/tools/etc/
 RUN chmod 755 /opt/tools/sbin/* /opt/tools/bin/*
+
+# Post installation task to enable/disable oracle options
+USER oracle
+RUN /opt/tools/bin/orclopts.sh
+
+USER root
 
 EXPOSE 1521 5500
 

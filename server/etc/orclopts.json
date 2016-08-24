@@ -1,0 +1,8 @@
+{
+  "options":{
+    "dm": "disable",
+    "olap": "disable",
+    "partitioning": "disable",
+    "rat": "disable"
+  }
+}
